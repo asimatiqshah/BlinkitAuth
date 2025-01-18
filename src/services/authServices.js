@@ -7,14 +7,23 @@ import { apiAxios } from "./apiinterceptor";
 //THIS FUNCTION - USING IN CUSTOMER LOGIN TO CHECK USER IN DATABASE
 export const customerLoginHandler = async (phoneNumber) => {
     try {
-        let response = await axios.post(`${BASE_URL}/customer/login`, { phone: phoneNumber });
+        let response = await axios.post(`${BASE_URL}/customer/login`, { phone: phoneNumber },{
+            headers: {
+                'Content-Type': 'application/json'
+              }
+        });
+        console.log(response);
         const { accessToken, refreshToken, customer } = response.data;
+        console.log("going here");
+        
         tokenStorage.set('accessToken', accessToken);
         tokenStorage.set('refreshToken', refreshToken);
         const { setUser } = useAuthStore.getState();
+        console.log(accessToken);
         setUser(customer);
 
     } catch (error) {
+        console.log(error);
         console.log(error.response);
     }
 }

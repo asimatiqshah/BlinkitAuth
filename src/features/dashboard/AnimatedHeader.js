@@ -3,14 +3,30 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { useAuthStore } from "../../state/authStore";
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import { fonts_sizes, fonts_weights } from "../../utills/Constants";
+import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated";
 const AnimatedHeader = ({ showNotice }) => {
 
     //Fetching User From AuthStore
     const { user, setUser } = useAuthStore();
     const { scrollY } = useCollapsibleContext();
 
+    //*Note : when you use useAnimatedStyle so use Animated of react-native-reanimated
+    //================================================================================
+
+    const headerAnimations = useAnimatedStyle(() => {
+        // console.log(scrollY.value); 
+        const opacity = interpolate(
+            scrollY.value,
+            [0, 80],
+            [1, 0]
+        );
+        return { opacity };
+    });
+    
+
     return (
-        <View style={styles.subContainer}>
+
+        <Animated.View style={[styles.subContainer,headerAnimations]}>
             {/* Header Component Code Placed Here */}
             <TouchableOpacity>
                 <Text style={styles.text}>Delivery In</Text>
@@ -30,12 +46,11 @@ const AnimatedHeader = ({ showNotice }) => {
                     <Icon name="caret-down" size={20} color="#fff" />
                 </View>
             </TouchableOpacity>
-
             <TouchableOpacity>
                 <Icon name="user-circle-o" size={30} color="#fff" />
             </TouchableOpacity>
             {/* **** Header Component Code Placed Here**** */}
-        </View>
+        </ Animated.View>
     )
 }
 
@@ -77,7 +92,7 @@ const styles = StyleSheet.create({
         alignItems:'center',
         paddingTop:10,
         paddingHorizontal:10,
-        justifyContent:'space-between'
+        justifyContent:'space-between',
     },
     noticeBtn:{
         backgroundColor:'#E8EAF5',

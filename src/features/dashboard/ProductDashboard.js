@@ -1,11 +1,15 @@
-import { Animated as RNAnimated, StyleSheet, Text, TextInput, View } from "react-native";
+import { Image, Animated as RNAnimated, StyleSheet, Text, TextInput, View } from "react-native";
 import NoticeAnimation from "../../components/dashboard/NoticeAnimation.js";
 import { useEffect, useRef } from "react";
 import TriangleShape from "../../assets/svg/TriangleShape.js";
 import Visuals from "./Visuals.js";
 import LinearGradient from "react-native-linear-gradient";
-import { CollapsibleContainer, CollapsibleHeaderContainer, withCollapsibleContext } from "@r0b0t3d/react-native-collapsible";
+import { CollapsibleContainer, CollapsibleHeaderContainer, CollapsibleScrollView, StickyView, withCollapsibleContext } from "@r0b0t3d/react-native-collapsible";
 import AnimatedHeader from "./AnimatedHeader.js";
+import StickSearchBar from "./StickSearchBar.js";
+import RollingBar from "react-native-rolling-bar";
+import Content from "../../components/dashboard/Content.js";
+import { fonts_sizes, fonts_weights } from "../../utills/Constants.js";
 const ProductDashboard = () => {
     const noticePosition = useRef(new RNAnimated.Value(-100)).current;
 
@@ -36,23 +40,48 @@ const ProductDashboard = () => {
 
     return (
         <NoticeAnimation noticePosition={noticePosition}>
-                <Visuals />
-                {/* NoticeAnimation children styling working here */}
-                <CollapsibleContainer>
-                    <CollapsibleHeaderContainer containerStyle={{backgroundColor:'transparent'}}>
-                        <AnimatedHeader
-                            showNotice={() => {
-                                slideDown();
-                                const timeoutID = setTimeout(() => {
-                                    slideUp();
-                                }, 4000);
-                                return () => clearTimeout(timeoutID);
-                            }}
-                        />
-                    </CollapsibleHeaderContainer>
-                </CollapsibleContainer>
-                {/* <Text>ProductDashboard</Text> */}
-            
+            <Visuals />
+            {/* NoticeAnimation children styling working here */}
+            <CollapsibleContainer style={{ flex: 1 }}>
+                <CollapsibleHeaderContainer containerStyle={{ backgroundColor: 'transparent',width:'100%'}}>
+                    {/* Consider As View Wrapped in Component */}
+                    <AnimatedHeader
+                        showNotice={() => {
+                            slideDown();
+                            const timeoutID = setTimeout(() => {
+                                slideUp();
+                            }, 4000);
+                            return () => clearTimeout(timeoutID);
+                        }}
+                    />
+                    {/* Consider As StickyView Wrapped in Component */}
+                    <StickSearchBar />
+                </CollapsibleHeaderContainer>
+
+                <CollapsibleScrollView>
+                        <Content />
+
+                        <View style={{backgroundColor:'#F8F8F8',padding:20,height:180}}>
+                            <Text style={styles.credit_heading}>
+                                {`Pakistan\nlast minute app`}
+                                <Image
+                                style={styles.mango_img}
+                                source={require('../../assets/images/mango.png')}
+                                />
+                            </Text>
+                            <Text style={styles.credit_text}>
+                                Developed By Syed Asim
+                                <Image
+                                style={styles.heart_img}
+                                source={require('../../assets/images/heart.png')}
+                                />
+                            </Text>
+                        </View>
+
+                </CollapsibleScrollView>
+            </CollapsibleContainer>
+            {/* <Text>ProductDashboard</Text> */}
+
         </NoticeAnimation>
     )
 }
@@ -75,4 +104,29 @@ var styles = StyleSheet.create({
         color: '#ffffff',
         backgroundColor: 'transparent',
     },
+    mango_img:{
+        width:30,
+        height:30,
+        opacity:0.2
+    },
+    heart_img:{
+        width:15,
+        height:15,
+        opacity:0.2
+    },
+    credit_heading:{
+        fontSize:32,
+        fontWeight:fonts_weights.extraBold,
+        alignItems:'center',
+        justifyContent:'center',
+        opacity:0.2,
+        paddingVertical:10
+    },
+    credit_text:{
+        fontSize:fonts_sizes.small,
+        fontWeight:fonts_weights.regular,
+        alignItems:'center',
+        justifyContent:'center',
+        opacity:0.2
+    }
 });

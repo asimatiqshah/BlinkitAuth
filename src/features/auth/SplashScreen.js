@@ -15,10 +15,12 @@ const SplashScreen = () => {
   const tokenCheck = async() => {
     const accessToken = tokenStorage.getString('accessToken');
     const refreshToken = tokenStorage.getString('refreshToken');
-
+    console.log(accessToken);
+    
     if (accessToken) {
       const decodeAccessToken = jwtDecode(accessToken);
       const decodeRefreshToken = jwtDecode(refreshToken);
+      console.log(decodeRefreshToken);
       
       //Check Token Expiry
       // 1.current time (millisecond)
