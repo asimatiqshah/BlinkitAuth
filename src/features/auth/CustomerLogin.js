@@ -68,7 +68,7 @@ const CustomerLogin = () => {
   }, [translateY]);
 
   return (
-    <GestureHandlerRootView style={{position: 'relative', flex: 1}}>
+    <View style={{position: 'relative', flex: 1}}>
       <ProductSlider />
       <Animated.View style={[Styles.container, {transform: [{translateY}]}]}>
         <Image
@@ -82,7 +82,7 @@ const CustomerLogin = () => {
           <Text style={Styles.btn_text}>Continue</Text>
         </TouchableOpacity>
       </Animated.View>
-    </GestureHandlerRootView>
+    </View>
   );
 };
 export default CustomerLogin;
