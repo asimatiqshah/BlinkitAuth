@@ -25,3 +25,19 @@ const ProductDashboard = () => {
     )
 }
 export default ProductDashboard;
+
+ <View style={styles.flexRow}>
+            <View style={styles.imgContainer}>
+                <Image source={require('../../assets/products/2.png')} style={styles.img} />
+            </View>
+            <View style={{flexDirection:'row',width:'80%',justifyContent:'space-between'}}>
+                <View>
+                    <Text style={styles.txtHeading}>Amul Ice Cream Bar</Text>
+                    <Text style={styles.txtParagraph}>500 ml</Text>
+                </View>
+                <View>
+                    <Text style={styles.txtHeading}>$34</Text>
+                    <Text style={styles.txtParagraph}>1x</Text>
+                </View>
+            </View>
+        </View>

@@ -1,27 +1,28 @@
-import {Alert, Image, StyleSheet, Text, View} from 'react-native';
-import {Blinkit_Colors} from '../../utills/Constants.js';
-import {screenHeight, screenWidth} from '../../utills/Scalling';
-import {useAuthStore} from '../../state/authStore.js';
-import {useEffect} from 'react';
-import {mmkvStorage, tokenStorage} from '../../state/storage.js';
-import {useNavigation} from '@react-navigation/native';
-import {jwtDecode} from 'jwt-decode';
-import {refetchUser, refreshTokenHandler} from '../../services/authServices.js';
+import { Alert, Image, StyleSheet, Text, View } from 'react-native';
+import { Blinkit_Colors } from '../../utills/Constants.js';
+import { screenHeight, screenWidth } from '../../utills/Scalling';
+import { useAuthStore } from '../../state/authStore.js';
+import { useEffect } from 'react';
+import { mmkvStorage, tokenStorage } from '../../state/storage.js';
+import { useNavigation } from '@react-navigation/native';
+import { jwtDecode } from 'jwt-decode';
+import { refetchUser, refreshTokenHandler } from '../../services/authServices.js';
+import { io } from 'socket.io-client';
 
 const SplashScreen = () => {
-  const {user,setUser, currentOrder} = useAuthStore();
+  const { user, setUser, currentOrder } = useAuthStore();
   const navigation = useNavigation();
+  //previous tokencheck here
 
-  const tokenCheck = async() => {
+  const tokenCheck = async () => {
     const accessToken = tokenStorage.getString('accessToken');
     const refreshToken = tokenStorage.getString('refreshToken');
-    console.log(accessToken);
     
     if (accessToken) {
       const decodeAccessToken = jwtDecode(accessToken);
       const decodeRefreshToken = jwtDecode(refreshToken);
-      console.log(decodeRefreshToken);
-      
+      console.log("decodeRefreshToken", decodeRefreshToken);
+
       //Check Token Expiry
       // 1.current time (millisecond)
       // 2.extract token exp and convert it in (millisecond) Or Reverse it if you want to check in (seconds)
@@ -35,7 +36,7 @@ const SplashScreen = () => {
         //reset and navigate
         navigation.reset({
           index: 0,
-          routes: [{name: 'CustomerLogin'}],
+          routes: [{ name: 'CustomerLogin' }],
         });
         Alert.alert('Session expired! Please login again');
         return false;
@@ -44,7 +45,7 @@ const SplashScreen = () => {
       if (decodeAccessToken?.exp < currentTime) {
         try {
           //now refresh the token
-          await refreshTokenHandler(refreshToken,navigation);
+          await refreshTokenHandler(refreshToken, navigation);
           await refetchUser(setUser);
         } catch (error) {
           Alert.alert('There was an error during access token!');
@@ -52,29 +53,32 @@ const SplashScreen = () => {
         }
       }
 
-      if(decodeAccessToken?.role == "Customer"){
-        navigation.reset({
-          index:0,
-          routes:[{name: 'ProductDashboard'}]
-        });
-      }else {
-        navigation.reset({
-          index:0,
-          routes:[{name: 'DeliveryDashboard'}]
-        });
+      if (decodeAccessToken?.role) {
+        try {
+          await refetchUser(setUser);
+          navigation.reset({
+            index: 0,
+            routes: [{ name: decodeAccessToken?.role === "Customer" ? 'ProductDashboard' : 'DeliveryDashboard' }]
+          });
+          return true;
+        } catch (error) {
+          Alert.alert('There was an error during fetching user');
+          return false;
+        }
       }
-      return true;
+      navigation.reset({
+        index:0,
+        routes:[{name:'CustomerLogin'}]
+      });
+      return false;
     }
-    navigation.reset({
-      index:0,
-      routes:[{name:'CustomerLogin'}]
-    });
-    return false;
-  };
-
-
+  }
   //SET UP FETCH USER FUNCTION IN USE-EFFECT
   useEffect(() => {
+     navigation.reset({
+        index:0,
+        routes:[{name:'CustomerLogin'}]
+      });
     //1. setup function
     //2. setup setTimeout
     //3. erase/stop timeout

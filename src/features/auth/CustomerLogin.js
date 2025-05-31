@@ -19,6 +19,8 @@ import {
 import {useEffect, useRef, useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
+import Icon from 'react-native-vector-icons/dist/Ionicons';
+
 import { customerLoginHandler } from '../../services/authServices';
 const CustomerLogin = () => {
   const [phoneNumber,setPhoneNumber] = useState();
@@ -69,6 +71,9 @@ const CustomerLogin = () => {
 
   return (
     <View style={{position: 'relative', flex: 1}}>
+      <TouchableOpacity activeOpacity={0.5} onPress={()=>navigation.navigate('DeliveryLogin')} style={Styles.deliveryBtn}>
+        <Icon name="bicycle" size={32} color="#00000" />
+      </TouchableOpacity>
       <ProductSlider />
       <Animated.View style={[Styles.container, {transform: [{translateY}]}]}>
         <Image
@@ -132,4 +137,18 @@ const Styles = StyleSheet.create({
     fontWeight: fonts_weights.regular,
     color: 'white',
   },
+  deliveryBtn:{
+    backgroundColor:'white',
+     width: 60,
+    height: 60,
+    borderRadius: 30, // half of width/height,
+    elevation: 5,
+    position:'absolute',
+    top:0,
+    right:0,
+    zIndex:1,
+    justifyContent:'center',
+    alignItems:'center',
+    margin:10
+  }
 });

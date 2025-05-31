@@ -16,8 +16,6 @@ const Visuals = () => {
   // Add property in Animated.View
 
   const { scrollY } = useCollapsibleContext();
-
-
   const headerAnimatedStyle = useAnimatedStyle(() => {
     const opacity = interpolate(
       scrollY.value,

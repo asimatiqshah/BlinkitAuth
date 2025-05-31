@@ -18,12 +18,11 @@ apiAxios.interceptors.request.use(
     (config) => {
         // Modify the request before sending it, e.g., add an authorization token
         const accessToken = tokenStorage.getString('accessToken');
-        console.log("i am here in apiinterceptor");
         if (accessToken) {
             config.headers.Authorization = `Bearer ${accessToken}`;
         }
         // You can also add logging or other request-related logic here
-        console.log('Request:', config);
+        // console.log('Request:', config);
         return config;
     }
 );

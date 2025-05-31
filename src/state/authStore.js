@@ -1,45 +1,62 @@
 import { create } from "zustand";
 import { MMKV } from "react-native-mmkv";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { mmkvStorage, storage } from "./storage";
+import { mmkvStorage } from "./storage"; // Ensure you have this
+import { basketCreate } from "../services/basketServices";
 
-
-//Zustand store and manually store data in mmkv storage
-////////////////////////////////////////////////////////
-// const authStore = (set)=>({
-//     user:storage.getString('user') || null,
-//     currentOrder:null,
-//     setUser:(data)=>{
-//         //zustand store updated
-//         set({user:data});
-//         //store in mmkV storage
-//         storage.set('user',data);
-//     },
-//     setCurrentOrder:(order)=>set({currentOrder:order}),
-//     logout:()=> set({user:null,currentOrder:null})
-
-// });
-// const useAuthStore = create(authStore);
-// export default useAuthStore;
-
-
-//Zustand store with presist middleware
 export const useAuthStore = create(
     persist(
-        (set,get)=>({
-            user:null,
-            currentOrder:null,
-            setUser:(data)=> set({user:data}),
-            setCurrentOrder:(order)=>set({currentOrder:order}),
-            logout:()=> set({user:null,currentOrder:null})
+        (set, get) => ({
+            user: null,
+            currentOrder: null,
+            cart: {},
+
+            addProduct: (productId,name,productWeight,productPrice,image) => {
+                //1.update zustand
+                set((state) => {
+                    const cart =  {
+                        ...state.cart,
+                        [productId]: {
+                            quantity: (state.cart[productId]?.quantity || 0) + 1,
+                            price: productPrice,
+                            name,
+                            productWeight,
+                            image
+                        },
+                    }
+                    return {cart}
+                });
+
+                //2.update backand
+                const userId = get().user._id;
+                const quantity = get().cart[productId].quantity;
+                //now call api function and pass parameters
+                basketCreate(userId,quantity,productId);
+
+            },
+            removeProduct: (productId) => {
+                set((state) => {
+                    const newCart = { ...state.cart };
+                    if (newCart[productId]) {
+                        if (newCart[productId].quantity > 1) {
+                            newCart[productId].quantity -= 1;
+                        } else {
+                            delete newCart[productId];
+                        }
+                    }
+                    return { cart: newCart };
+                });
+            },
+
+            setUser: (data) => set({ user: data }),
+            setCurrentOrder: (order) => set({ currentOrder: order }),
+            clearCart:()=>set({ cart: {} }),
+            logout: () => set({ user: null, currentOrder: null, cart: {} }),
         }),
         {
-            name:'auth-storage',
-            storage:createJSONStorage(() => mmkvStorage)
+            name: "auth-storage",
+            storage: createJSONStorage(() => mmkvStorage),
         }
     )
 );
-
-
-
 

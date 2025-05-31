@@ -4,11 +4,13 @@ import { useAuthStore } from "../../state/authStore";
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import { fonts_sizes, fonts_weights } from "../../utills/Constants";
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated";
+import { useNavigation } from "@react-navigation/native";
 const AnimatedHeader = ({ showNotice }) => {
 
     //Fetching User From AuthStore
     const { user, setUser } = useAuthStore();
     const { scrollY } = useCollapsibleContext();
+    const navigation = useNavigation();
 
     //*Note : when you use useAnimatedStyle so use Animated of react-native-reanimated
     //================================================================================
@@ -46,7 +48,7 @@ const AnimatedHeader = ({ showNotice }) => {
                     <Icon name="caret-down" size={20} color="#fff" />
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={()=>navigation.navigate('Profile')}>
                 <Icon name="user-circle-o" size={30} color="#fff" />
             </TouchableOpacity>
             {/* **** Header Component Code Placed Here**** */}

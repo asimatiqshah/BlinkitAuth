@@ -15,7 +15,7 @@ export const storage = new MMKV({
     setItem:(key,value)=>{
         storage.set(key,value)
     },
-    geItem:(key)=>{
+    getItem:(key)=>{
         const value = storage.getString(key);
         return value || null;
     },

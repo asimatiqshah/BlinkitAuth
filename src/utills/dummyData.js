@@ -23,4 +23,47 @@ export const adData = [
     require('../assets/products/c3.jpg'),
     require('../assets/products/c4.jpg'),
     require('../assets/products/c5.jpg'),
+];
+
+export const categories = [
+    {
+        id: 1,
+        name: "Milk, Curd & Paneer",
+        image: require('../assets/category/1.png'),
+    },
+    {
+        id: 2,
+        name: "Pharma & Wellness",
+        image: require('../assets/category/2.png')
+    },
+    {
+        id: 3,
+        name: "Vegetables & Fruits",
+        image: require('../assets/category/3.png')
+    },
+    {
+        id: 4,
+        name: "Munchies",
+        image: require('../assets/category/4.png')
+    },
+    {
+        id: 5,
+        name: "Home & Office",
+        image: require('../assets/category/5.png')
+    },
+    {
+        id: 6,
+        name: "Baby Care",
+        image: require('../assets/category/6.png')
+    },
+    {
+        id: 7,
+        name: "Ata, Rice & Dal",
+        image: require('../assets/category/7.png')
+    },
+    {
+        id: 8,
+        name: "Cleaning Essentials",
+        image: require('../assets/category/8.png')
+    },
 ]

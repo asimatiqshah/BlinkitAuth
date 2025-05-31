@@ -1,0 +1,59 @@
+  const tokenCheck = async() => {
+    const accessToken = tokenStorage.getString('accessToken');
+    const refreshToken = tokenStorage.getString('refreshToken');
+    console.log(accessToken);
+    
+    if (accessToken) {
+      const decodeAccessToken = jwtDecode(accessToken);
+      const decodeRefreshToken = jwtDecode(refreshToken);
+      console.log("decodeRefreshToken",decodeRefreshToken);
+      
+      //Check Token Expiry
+      // 1.current time (millisecond)
+      // 2.extract token exp and convert it in (millisecond) Or Reverse it if you want to check in (seconds)
+      // 3.check wheather token exp is less than or greater. if less which mean token expire.
+
+      //we check in seconds
+      //both values should be in seconds
+      const currentTime = Date.now() / 1000;
+      if (decodeRefreshToken?.exp < currentTime) {
+        //go and get token again
+        //reset and navigate
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'CustomerLogin'}],
+        });
+        Alert.alert('Session expired! Please login again');
+        return false;
+      }
+
+      if (decodeAccessToken?.exp < currentTime) {
+        try {
+          //now refresh the token
+          await refreshTokenHandler(refreshToken,navigation);
+          await refetchUser(setUser);
+        } catch (error) {
+          Alert.alert('There was an error during access token!');
+          return false;
+        }
+      }
+
+      if(decodeAccessToken?.role == "Customer"){
+        navigation.reset({
+          index:0,
+          routes:[{name: 'ProductDashboard'}]
+        });
+      }else {
+        navigation.reset({
+          index:0,
+          routes:[{name: 'DeliveryDashboard'}]
+        });
+      }
+      return true;
+    }
+    navigation.reset({
+      index:0,
+      routes:[{name:'CustomerLogin'}]
+    });
+    return false;
+  };
